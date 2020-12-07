@@ -49,15 +49,15 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!value) {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('请输入不少于6位的密码'))
       } else {
         callback()
       }
@@ -98,6 +98,9 @@ export default {
       })
     },
     handleLogin() {
+      /**
+       * 对登录表单进行校验，在校验完后调用回调函数
+       */
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
