@@ -10,6 +10,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Dashboard',
   computed: {
+    // 取出store中的name
     ...mapGetters([
       'name'
     ])

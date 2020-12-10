@@ -5,6 +5,8 @@ import Layout from '@/layout'
 Vue.use(Router)
 
 export const constantRoutes = [
+
+  // 后台管理页面路由
   {
     path: '/admin/login',
     component: () => import('@/views/admin/login'),
@@ -18,93 +20,86 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/admin',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/admin/dashboard',
     children: [
       {
         path: 'dashboard',
         name: 'Dashboard',
-        component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
+        component: () => import('@/views/admin/dashboard/index'),
+        meta: { title: '工作台', icon: 'dashboard' }
       }
     ]
   },
 
   {
-    path: '/example',
+    path: '/admin/example',
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
         path: 'table',
         name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        component: () => import('@/views/admin/table/index'),
+        meta: { title: '用户管理', icon: 'el-icon-s-help' }
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/admin/form',
     component: Layout,
     children: [
       {
         path: 'index',
         name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        component: () => import('@/views/admin/form/index'),
+        meta: { title: '题库管理', icon: 'form' }
       }
     ]
   },
 
   {
-    path: '/nested',
+    path: '/admin/nested',
     component: Layout,
-    redirect: '/nested/menu1',
+    redirect: '/admin/nested/menu1',
     name: 'Nested',
     meta: {
-      title: 'Nested',
+      title: '比赛管理',
       icon: 'nested'
     },
     children: [
       {
         path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        component: () => import('@/views/admin/nested/menu1/index'), // Parent router-view
         name: 'Menu1',
         meta: { title: 'Menu1' },
         children: [
           {
             path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
+            component: () => import('@/views/admin/nested/menu1/menu1-1'),
             name: 'Menu1-1',
             meta: { title: 'Menu1-1' }
           },
           {
             path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
+            component: () => import('@/views/admin/nested/menu1/menu1-2'),
             name: 'Menu1-2',
             meta: { title: 'Menu1-2' },
             children: [
               {
                 path: 'menu1-2-1',
                 component: () =>
-                  import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+                  import('@/views/admin/nested/menu1/menu1-2/menu1-2-1'),
                 name: 'Menu1-2-1',
                 meta: { title: 'Menu1-2-1' }
               },
               {
                 path: 'menu1-2-2',
                 component: () =>
-                  import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+                  import('@/views/admin/nested/menu1/menu1-2/menu1-2-2'),
                 name: 'Menu1-2-2',
                 meta: { title: 'Menu1-2-2' }
               }
@@ -112,7 +107,7 @@ export const constantRoutes = [
           },
           {
             path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
+            component: () => import('@/views/admin/nested/menu1/menu1-3'),
             name: 'Menu1-3',
             meta: { title: 'Menu1-3' }
           }
@@ -120,7 +115,7 @@ export const constantRoutes = [
       },
       {
         path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
+        component: () => import('@/views/admin/nested/menu2/index'),
         name: 'Menu2',
         meta: { title: 'menu2' }
       }
@@ -138,7 +133,8 @@ export const constantRoutes = [
     ]
   },
 
-  // 404 page must be placed at the end !!!
+  // 404 页面 必须在最后 !!!
+  // 路由是有优先级的，谁在前面就谁优先匹配，所以越精确的路由，越要放在前面
   { path: '*', redirect: '/404', hidden: true }
 ]
 
