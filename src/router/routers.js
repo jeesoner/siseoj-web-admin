@@ -4,11 +4,34 @@ import Layout from '@/layout'
 
 Vue.use(Router)
 
-export const constantRoutes = [
+/**
+ * hidden: true                   默认false，当设置 true 的时候该路由不会在侧边栏出现，如401，login等页面，或者如一些编辑页面
+ * alwaysShow: true               当一个路由下面的 children声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
+ *                                只有一个时，会将那个子路由当做根路由显示在侧边栏--如引导页面
+ *                                设置 alwaysShow为true，这样它就会忽略之前定义的规则，一直显示根路由
+ * redirect: noRedirect           当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
+ * name:'router-name'             设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
+ * meta : {
+    roles: ['superAdmin','editor'] 设置该路由进入的权限，支持多个权限叠加
+    title: 'title'               设置该路由在侧边栏和面包屑中展示的名字
+    icon: 'svg-name'             设置该路由的图标
+    noCache: true                默认false，如果设置为true，则不会被 <keep-alive> 缓存
+    affix: true                  if set true, the tag will affix in the tags-view
+    breadcrumb: false            如果设置为false，则不会在breadcrumb面包屑中显示
+}
+    activeMenu: '/example/list'  如果设置了路径，在侧边栏会高亮你设置的路径
+  }
+ */
 
+/**
+ * constantRoutes
+ * 不需要动态判断权限的路由
+ * 所有角色都可以看到
+ */
+export const constantRoutes = [
   // 后台管理页面路由
   {
-    path: '/admin/login',
+    path: '/login',
     component: () => import('@/views/admin/login'),
     hidden: true
   },
@@ -20,9 +43,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/admin',
+    path: '/',
     component: Layout,
-    redirect: '/admin/dashboard',
+    redirect: '/dashboard',
     children: [
       {
         path: 'dashboard',
@@ -34,90 +57,67 @@ export const constantRoutes = [
   },
 
   {
-    path: '/admin/example',
+    path: '/system',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
+    name: 'System',
+    redirect: '/system/user',
+    meta: { title: '系统管理', icon: 'system1' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/admin/table/index'),
-        meta: { title: '用户管理', icon: 'el-icon-s-help' }
-      }
-    ]
-  },
-
-  {
-    path: '/admin/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/admin/form/index'),
-        meta: { title: '题库管理', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/admin/nested',
-    component: Layout,
-    redirect: '/admin/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: '比赛管理',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/admin/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/admin/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/admin/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () =>
-                  import('@/views/admin/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () =>
-                  import('@/views/admin/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/admin/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/admin/system/user/index'),
+        meta: { title: '用户管理', icon: 'peoples' }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/admin/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/admin/system/role/index'),
+        meta: { title: '角色管理', icon: 'role' }
+      }
+    ]
+  },
+
+  {
+    path: '/problemset',
+    component: Layout,
+    name: 'Problemset',
+    redirect: '/problemset/problems',
+    meta: { title: '题库管理', icon: 'list' },
+    children: [
+      {
+        path: 'problems',
+        name: 'Problems',
+        component: () => import('@/views/admin/problemset/problems/index'),
+        meta: { title: '题目管理', icon: 'education' }
+      },
+      {
+        path: 'tags',
+        name: 'Tags',
+        component: () => import('@/views/admin/system/role/index'),
+        meta: { title: '标签管理', icon: 'role' }
+      }
+    ]
+  },
+
+  {
+    path: '/contest',
+    component: Layout,
+    name: 'Problem',
+    redirect: '/problem/user',
+    meta: { title: '比赛管理', icon: 'source' },
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/admin/system/user/index'),
+        meta: { title: '普通模式', icon: 'peoples' }
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/admin/system/role/index'),
+        meta: { title: '挑战模式', icon: 'role' }
       }
     ]
   },
@@ -138,11 +138,17 @@ export const constantRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-const createRouter = () => new Router({
-  mode: 'history',
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+/**
+ * asyncRoutes
+ * 需要动态判断权限并通过 addRoutes 动态添加的页面
+ */
+
+const createRouter = () =>
+  new Router({
+    mode: 'history',
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
 

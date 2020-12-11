@@ -11,7 +11,7 @@ import App from './App'
 import store from './store'
 import router from './router/routers'
 
-import '@/icons' // icon
+import './assets/icons' // icon
 import './router/index' // permission control
 
 if (process.env.NODE_ENV === 'production') {
