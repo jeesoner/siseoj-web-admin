@@ -1,40 +1,105 @@
 <template>
   <div class="app-container">
-    <!--表格渲染-->
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column type="selection" width="55">
-      </el-table-column>
-      <el-table-column prop="id" label="#" width="100">
-      </el-table-column>
-      <el-table-column prop="source" label="OJ" show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column prop="title" label="题目" show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column prop="tag" label="标签" show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column prop="level" label="难度">
-      </el-table-column>
+    <!-- 工具栏 -->
+    <div class="head-container">
+      <!-- 搜索 -->
+      <el-input clearable size="small" placeholder="输入编号或题目搜索" style="width: 200px;" class="filter-item" />
+      <!-- 时间 -->
+      <date-range-picker class="date-item" />
+      <span>
+        <!-- 搜索 -->
+        <el-button class="filter-item" size="mini" type="success" icon="el-icon-search">搜索</el-button>
+        <!-- 重置 -->
+        <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
+      </span>
+      <!-- 操作 -->
+      <div class="crud-opts">
+        <span class="crud-opts-left">
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+          >
+            新增
+          </el-button>
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="success"
+            icon="el-icon-edit"
+          >
+            修改
+          </el-button>
+          <el-button
+            slot="reference"
+            class="filter-item"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+          >
+            删除
+          </el-button>
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="warning"
+            icon="el-icon-download"
+          >导出</el-button>
+        </span>
+        <el-button-group class="crud-opts-right">
+          <el-button
+            size="mini"
+            plain
+            type="info"
+            icon="el-icon-search"
+          />
+          <el-button
+            size="mini"
+            icon="el-icon-refresh"
+          />
+        </el-button-group>
+      </div>
+      <!-- 状态 -->
+      <!-- <el-select clearable size="small" placeholder="状态" class="filter-item" style="width: 90px">
+        <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+      </el-select> -->
+    </div>
+    <!-- 表格渲染 -->
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="id" label="#" width="100" />
+      <el-table-column prop="source" label="OJ" show-overflow-tooltip />
+      <el-table-column prop="title" label="题目" show-overflow-tooltip />
+      <el-table-column prop="tag" label="标签" show-overflow-tooltip />
+      <el-table-column prop="level" label="难度" />
       <el-table-column label="更新时间" width="180">
         <template slot-scope="scope">
-          <i class="el-icon-time"></i>
+          <i class="el-icon-time" />
           <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="120" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEdit(scope.$index, scope.row)" />
+          <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)" />
         </template>
       </el-table-column>
     </el-table>
+    <pagination />
   </div>
 </template>
 
 <script>
 import { isvalidPhone } from '@/utils/validate'
+import DateRangePicker from '@/components/DateRangePicker'
+import pagination from '@crud/Pagination'
 export default {
-  name: 'User',
-  components: {},
+  name: 'Problems',
+  components: {
+    DateRangePicker: DateRangePicker,
+    pagination: pagination
+  },
   data() {
     // 自定义验证
     const validPhone = (rule, value, callback) => {
@@ -135,5 +200,18 @@ export default {
 }
 </script>
 
-<style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .crud-opts {
+    padding: 4px 0;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+  }
+  .crud-opts .crud-opts-right {
+    margin-left: auto;
+  }
+  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
+    height: 30px;
+    line-height: 30px;
+  }
 </style>
