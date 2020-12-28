@@ -2,16 +2,16 @@
   <div class="app-container">
     <!-- 工具栏 -->
     <div class="head-container">
-      <!-- 搜索 -->
-      <el-input clearable size="small" placeholder="输入编号或题目搜索" style="width: 200px;" class="filter-item" />
-      <!-- 时间 -->
-      <date-range-picker class="date-item" />
-      <span>
+      <div v-if="searchToggle">
         <!-- 搜索 -->
-        <el-button class="filter-item" size="mini" type="success" icon="el-icon-search">搜索</el-button>
-        <!-- 重置 -->
-        <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
-      </span>
+        <el-input clearable size="small" placeholder="输入编号或题目搜索" style="width: 200px;" class="filter-item" />
+        <span>
+          <!-- 搜索 -->
+          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search">搜索</el-button>
+          <!-- 重置 -->
+          <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
+        </span>
+      </div>
       <!-- 操作 -->
       <div class="crud-opts">
         <span class="crud-opts-left">
@@ -53,6 +53,7 @@
             plain
             type="info"
             icon="el-icon-search"
+            @click="toggleSearch"
           />
           <el-button
             size="mini"
@@ -92,14 +93,10 @@
 
 <script>
 import { isvalidPhone } from '@/utils/validate'
-import DateRangePicker from '@/components/DateRangePicker'
-import pagination from '@crud/Pagination'
+import Pagination from '@/components/Pagination'
 export default {
   name: 'Problems',
-  components: {
-    DateRangePicker: DateRangePicker,
-    pagination: pagination
-  },
+  components: { Pagination },
   data() {
     // 自定义验证
     const validPhone = (rule, value, callback) => {
@@ -112,6 +109,7 @@ export default {
       }
     }
     return {
+      searchToggle: true,
       tableData: [
         {
           id: '1',
@@ -195,6 +193,9 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row)
+    },
+    toggleSearch() {
+      this.searchToggle = !this.searchToggle
     }
   }
 }
