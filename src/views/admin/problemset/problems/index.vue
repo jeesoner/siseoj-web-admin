@@ -6,7 +6,7 @@
       </el-table-column>
       <el-table-column prop="id" label="#" width="100">
       </el-table-column>
-      <el-table-column prop="source" label="OJ" show-overflow-tooltip>
+      <el-table-column prop="source" label="来源" show-overflow-tooltip>
       </el-table-column>
       <el-table-column prop="title" label="题目" show-overflow-tooltip>
       </el-table-column>
