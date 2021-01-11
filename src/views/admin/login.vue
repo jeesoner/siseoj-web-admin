@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 import Background from '@/assets/images/background.jpg'
 
 export default {
@@ -119,7 +118,6 @@ export default {
     getCode() {
 
     }
-    
   }
 }
 </script>

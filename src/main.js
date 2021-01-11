@@ -13,15 +13,12 @@ import router from './router/routers'
 
 import './assets/icons' // icon
 import './router/index' // permission control
-
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+import service from '@/api/http' // axios
 
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+Vue.prototype.axios = service
 
 new Vue({
   el: '#app',

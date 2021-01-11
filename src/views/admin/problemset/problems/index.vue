@@ -7,7 +7,7 @@
         <el-input clearable size="small" placeholder="输入编号或题目搜索" style="width: 200px;" class="filter-item" />
         <span>
           <!-- 搜索 -->
-          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search">搜索</el-button>
+          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="search">搜索</el-button>
           <!-- 重置 -->
           <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
         </span>
@@ -196,6 +196,10 @@ export default {
     },
     toggleSearch() {
       this.searchToggle = !this.searchToggle
+    },
+    search() {
+      console.log('search')
+      this.$axios.get('/test/1').then()
     }
   }
 }

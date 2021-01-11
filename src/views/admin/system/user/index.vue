@@ -1,28 +1,109 @@
 <template>
   <div class="app-container">
+    <!-- 工具栏 -->
+    <div class="head-container">
+      <div v-if="searchToggle">
+        <!-- 搜索 -->
+        <el-input clearable size="small" placeholder="用户名" style="width: 200px;" class="filter-item" />
+        <span>
+          <!-- 搜索 -->
+          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search">搜索</el-button>
+          <!-- 重置 -->
+          <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
+        </span>
+      </div>
+      <!-- 操作 -->
+      <div class="crud-opts">
+        <span class="crud-opts-left">
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+          >
+            新增
+          </el-button>
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="success"
+            icon="el-icon-edit"
+          >
+            修改
+          </el-button>
+          <el-button
+            slot="reference"
+            class="filter-item"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+          >
+            删除
+          </el-button>
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="warning"
+            icon="el-icon-download"
+          >导出</el-button>
+        </span>
+        <el-button-group class="crud-opts-right">
+          <el-button
+            size="mini"
+            plain
+            type="info"
+            icon="el-icon-search"
+            @click="toggleSearch"
+          />
+          <el-button
+            size="mini"
+            icon="el-icon-refresh"
+          />
+        </el-button-group>
+      </div>
+      <!-- 状态 -->
+      <!-- <el-select clearable size="small" placeholder="状态" class="filter-item" style="width: 90px">
+        <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+      </el-select> -->
+    </div>
     <!--表格渲染-->
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="日期" width="150" />
+      <el-table-column prop="date" label="日期" width="150">
+        <template slot-scope="scope">
+          <i class="el-icon-time" />
+          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="name" label="姓名" width="120" />
       <el-table-column prop="province" label="省份" width="120" />
       <el-table-column prop="city" label="市区" width="120" />
       <el-table-column prop="address" label="地址" width="300" />
       <el-table-column prop="zip" label="邮编" width="120" />
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column label="操作" width="120" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleClick(scope.row)">查看</el-button>
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEdit(scope.$index, scope.row)" />
+          <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)" />
         </template>
       </el-table-column>
     </el-table>
+    <pagination />
+    <user-edit
+      ref="edit"
+      :dialog-visible="dialog.isVisible"
+      :title="dialog.title"
+      @success="editSuccess"
+      @close="editClose"
+    />
   </div>
 </template>
 
 <script>
 import { isvalidPhone } from '@/utils/validate'
+import Pagination from '@/components/Pagination'
+import UserEdit from './edit'
 export default {
-  name: 'User',
-  components: {},
+  name: 'Problems',
+  components: { Pagination, UserEdit },
   data() {
     // 自定义验证
     const validPhone = (rule, value, callback) => {
@@ -35,6 +116,7 @@ export default {
       }
     }
     return {
+      searchToggle: false,
       tableData: [
         {
           date: '2016-05-02',
@@ -113,12 +195,31 @@ export default {
     }
   },
   methods: {
-    checkboxT(row, rowIndex) {
-      return row.id !== this.user.id
+    handleEdit(index, row) {
+      console.log(index, row)
+    },
+    handleDelete(index, row) {
+      console.log(index, row)
+    },
+    toggleSearch() {
+      this.searchToggle = !this.searchToggle
     }
   }
 }
 </script>
 
-<style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .crud-opts {
+    padding: 4px 0;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+  }
+  .crud-opts .crud-opts-right {
+    margin-left: auto;
+  }
+  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
+    height: 30px;
+    line-height: 30px;
+  }
 </style>
