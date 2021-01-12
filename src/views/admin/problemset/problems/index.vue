@@ -199,7 +199,15 @@ export default {
     },
     search() {
       console.log('search')
-      this.$axios.get('/test/1').then()
+      this.$http.get('/test/1').then(
+        res => {
+          console.log(res.data.data)
+        }
+      ).catch(
+        error => {
+          console.log(error)
+        }
+      )
     }
   }
 }

@@ -18,7 +18,7 @@ import service from '@/api/http' // axios
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
-Vue.prototype.axios = service
+Vue.prototype.$http = service
 
 new Vue({
   el: '#app',

@@ -49,14 +49,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入用户名'))
+        callback(new Error('用户名不能为空'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('请输入不少于6位的密码'))
+      if (value.length < 3) {
+        callback(new Error('密码不能少于3位'))
       } else {
         callback()
       }
@@ -65,8 +65,11 @@ export default {
       Background: Background,
       codeUrl: '',
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'root',
+        password: 'root',
+        rememberMe: false,
+        uuid: '',
+        code: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -84,6 +87,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    this.getCode()
   },
   methods: {
     showPwd() {
@@ -103,11 +109,12 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$http.post('auth/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
             this.loading = false
+            this.getCode()
           })
         } else {
           console.log('error submit!!')
@@ -116,7 +123,13 @@ export default {
       })
     },
     getCode() {
-
+      this.$http.get('/auth/code').then(
+        res => {
+          console.log(res.data)
+          this.codeUrl = res.data.img
+          this.loginForm.uuid = res.data.uuid
+        }
+      )
     }
   }
 }
