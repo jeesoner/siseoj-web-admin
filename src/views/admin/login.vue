@@ -109,10 +109,13 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$http.post('auth/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
+          this.$http.post('auth/login', this.loginForm).then(
+            res => {
+              if (res) {
+                this.$router.push({ path: this.redirect || '/' })
+              }
+              this.loading = false
+            }).catch(() => {
             this.loading = false
             this.getCode()
           })
@@ -125,7 +128,6 @@ export default {
     getCode() {
       this.$http.get('/auth/code').then(
         res => {
-          console.log(res.data)
           this.codeUrl = res.data.img
           this.loginForm.uuid = res.data.uuid
         }

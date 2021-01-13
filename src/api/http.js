@@ -32,15 +32,38 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   response => {
-    // 请求成功
-    if (response.data.success) {
+    const res = response.data
+    /**
+     * @success 为 ture 表示请求成功；为 false 表示业务异常
+     */
+    if (res.success) {
       return response.data
-    // 请求失败
     } else {
-      Notification.error({
-        title: response.data.message,
-        duration: 5000
-      })
+      if (res.code === 70001) { // 凭据失效，请重新登录
+        MessageBox.confirm(
+          'token已过期，可以取消继续留在该页面，或者重新登录',
+          '确定登出',
+          {
+            confirmButtonText: '重新登录',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }
+        ).then(() => {
+          store.dispatch('logout').then(() => {
+            location.reload() // 为了重新实例化vue-router对象 避免bug
+          })
+        })
+      } else if (res.code === 70002) { // 无权限访问
+        Notification.error({
+          title: response.data.message,
+          duration: 5000
+        })
+      } else {
+        Notification.error({
+          title: response.data.message,
+          duration: 5000
+        })
+      }
     }
   },
   error => {
