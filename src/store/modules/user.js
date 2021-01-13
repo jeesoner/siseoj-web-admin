@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router/routers'
 
@@ -28,7 +28,7 @@ const mutations = {
 }
 
 const actions = {
-  // user login
+  // 登录
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
