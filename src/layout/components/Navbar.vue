@@ -83,7 +83,7 @@ export default {
       })
     },
     logout() {
-      this.$store.dispatch('LogOut').then(() => {
+      this.$store.dispatch('logout').then(() => {
         location.reload()
       })
     }

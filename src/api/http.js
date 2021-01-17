@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { MessageBox, Message, Notification } from 'element-ui'
+import { Message, Notification } from 'element-ui'
+import Cookies from 'js-cookie'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import Router from '../router/index'
 
 // 创建axios实例
 const service = axios.create({
@@ -37,21 +37,13 @@ service.interceptors.response.use(
      * @success 为 ture 表示请求成功；为 false 表示业务异常
      */
     if (res.success) {
-      return response.data
+      return res.data
     } else {
       if (res.code === 70001) { // 凭据失效，请重新登录
-        MessageBox.confirm(
-          'token已过期，可以取消继续留在该页面，或者重新登录',
-          '确定登出',
-          {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }
-        ).then(() => {
-          store.dispatch('logout').then(() => {
-            location.reload() // 为了重新实例化vue-router对象 避免bug
-          })
+        store.dispatch('logout').then(() => {
+          // 用户登录界面提示
+          Cookies.set('point', 70001)
+          location.reload()
         })
       } else if (res.code === 70002) { // 无权限访问
         Notification.error({
@@ -64,6 +56,8 @@ service.interceptors.response.use(
           duration: 5000
         })
       }
+      console.log(res.message)
+      return Promise.reject(res.message)
     }
   },
   error => {

@@ -43,6 +43,9 @@
 
 <script>
 import Background from '@/assets/images/background.jpg'
+import { encrypt } from '@/utils/rsaEncrypt'
+import { getCodeImg } from '@/api/login'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'Login',
@@ -55,8 +58,8 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 3) {
-        callback(new Error('密码不能少于3位'))
+      if (value.length < 6) {
+        callback(new Error('密码不能少于6位'))
       } else {
         callback()
       }
@@ -66,16 +69,18 @@ export default {
       codeUrl: '',
       loginForm: {
         username: 'root',
-        password: 'root',
+        password: '123abc',
         rememberMe: false,
         uuid: '',
         code: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
       },
       loading: false,
+      cookiePass: '',
       passwordType: 'password',
       redirect: undefined
     }
@@ -89,7 +94,12 @@ export default {
     }
   },
   created() {
+    // 获取验证码
     this.getCode()
+    // 获取用户名密码等Cookie
+    this.getCookie()
+    // token 过期提示
+    this.point()
   },
   methods: {
     showPwd() {
@@ -107,15 +117,21 @@ export default {
        * 对登录表单进行校验，在校验完后调用回调函数
        */
       this.$refs.loginForm.validate(valid => {
+        const user = {
+          username: this.loginForm.username,
+          password: this.loginForm.password,
+          rememberMe: this.loginForm.rememberMe,
+          code: this.loginForm.code,
+          uuid: this.loginForm.uuid
+        }
+        user.password = encrypt(user.password)
         if (valid) {
           this.loading = true
-          this.$http.post('auth/login', this.loginForm).then(
-            res => {
-              if (res) {
-                this.$router.push({ path: this.redirect || '/' })
-              }
-              this.loading = false
-            }).catch(() => {
+          this.$store.dispatch('login', user).then(res => {
+            this.$router.push({ path: this.redirect || '/' })
+            this.loading = false
+            console.log('登录成功')
+          }).catch(() => {
             this.loading = false
             this.getCode()
           })
@@ -125,13 +141,37 @@ export default {
         }
       })
     },
+    getCookie() {
+      const username = Cookies.get('username')
+      let password = Cookies.get('password')
+      const rememberMe = Cookies.get('rememberMe')
+      // 保存cookie里面的加密后的密码
+      this.cookiePass = password === undefined ? '' : password
+      password = password === undefined ? this.loginForm.password : password
+      this.loginForm = {
+        username: username === undefined ? this.loginForm.username : username,
+        password: password,
+        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
+        code: ''
+      }
+    },
     getCode() {
-      this.$http.get('/auth/code').then(
-        res => {
-          this.codeUrl = res.data.img
-          this.loginForm.uuid = res.data.uuid
-        }
-      )
+      getCodeImg().then(res => {
+        this.codeUrl = res.img
+        this.loginForm.uuid = res.uuid
+      })
+    },
+    point() {
+      const point = Cookies.get('point') !== undefined
+      if (point) {
+        this.$notify({
+          title: '提示',
+          message: '当前登录状态已过期，请重新登录！',
+          type: 'warning',
+          duration: 5000
+        })
+        Cookies.remove('point')
+      }
     }
   }
 }

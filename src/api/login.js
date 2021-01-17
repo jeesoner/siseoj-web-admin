@@ -20,13 +20,16 @@ export function login(username, password, code, uuid) {
   })
 }
 
-export function logout(params) {
+export function logout() {
   return request({
+    url: 'auth/logout',
+    method: 'delete'
   })
 }
 
-export function getInfo(params) {
+export function getInfo() {
   return request({
-
+    url: 'auth/info',
+    method: 'get'
   })
 }

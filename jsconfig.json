@@ -2,8 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-        "@/*": ["src/*"],
-        "@crud/*": ["src/components/Crud/*"]
+        "@/*": ["src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
