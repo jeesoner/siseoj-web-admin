@@ -90,15 +90,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('SET_LOAD_MENUS', false)
     })
-  },
-
-  // 移除token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
   }
 }
 

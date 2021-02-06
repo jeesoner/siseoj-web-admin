@@ -25,6 +25,7 @@ service.interceptors.request.use(
   },
   error => {
     console.log(error)
+    Message.error('服务器繁忙，请稍后重试！')
     return Promise.reject(error)
   }
 )
@@ -61,11 +62,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    if (
-      String(error)
-        .toLowerCase()
-        .indexOf('timeout') !== -1
-    ) {
+    if (String(error).toLowerCase().indexOf('timeout') !== -1) {
       Message.error('服务器繁忙，请稍后重试！')
     } else if (error.response.status === 404) {
       Message.error('服务器好像挂了，要不等等试试')

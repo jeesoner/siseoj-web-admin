@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <div class="dashboard-text">name: {{ user.username }}</div>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ export default {
   computed: {
     // 取出store中的name
     ...mapGetters([
-      'name'
+      'user'
     ])
   }
 }

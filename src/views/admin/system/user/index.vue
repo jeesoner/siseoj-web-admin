@@ -74,26 +74,26 @@
           <span style="margin-left: 10px">{{ scope.row.date }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120" />
-      <el-table-column prop="province" label="省份" width="120" />
-      <el-table-column prop="city" label="市区" width="120" />
-      <el-table-column prop="address" label="地址" width="300" />
-      <el-table-column prop="zip" label="邮编" width="120" />
-      <el-table-column label="操作" width="120" align="center" fixed="right">
+      <el-table-column prop="name" label="姓名" />
+      <el-table-column prop="province" label="省份" />
+      <el-table-column prop="city" label="市区" />
+      <el-table-column prop="address" label="地址" />
+      <el-table-column prop="zip" label="邮编" />
+      <el-table-column label="操作" align="center" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEdit(scope.$index, scope.row)" />
           <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)" />
         </template>
       </el-table-column>
     </el-table>
-    <pagination />
-    <user-edit
+    <pagination v-show="total>0" :total="total" :page.sync="pagination.num" :limit.sync="pagination.size" @pagination="search" />
+    <!-- <user-edit
       ref="edit"
       :dialog-visible="dialog.isVisible"
       :title="dialog.title"
       @success="editSuccess"
       @close="editClose"
-    />
+    /> -->
   </div>
 </template>
 
@@ -116,6 +116,11 @@ export default {
       }
     }
     return {
+      total: 0,
+      pagination: {
+        size: 10,
+        num: 1
+      },
       searchToggle: false,
       tableData: [
         {
@@ -203,7 +208,8 @@ export default {
     },
     toggleSearch() {
       this.searchToggle = !this.searchToggle
-    }
+    },
+    search() {}
   }
 }
 </script>

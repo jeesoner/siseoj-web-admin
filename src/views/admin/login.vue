@@ -130,6 +130,12 @@ export default {
           this.$store.dispatch('login', user).then(res => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
+            this.$message({
+              title: '提示',
+              message: '登录成功，欢迎来到后台管理主页',
+              type: 'success',
+              duration: 3000
+            })
             console.log('登录成功')
           }).catch(() => {
             this.loading = false

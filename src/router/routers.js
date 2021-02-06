@@ -51,7 +51,7 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/admin/dashboard/index'),
-        meta: { title: '工作台', icon: 'dashboard' }
+        meta: { title: '主页', icon: 'dashboard' }
       }
     ]
   },
@@ -94,7 +94,7 @@ export const constantRoutes = [
       {
         path: 'tags',
         name: 'Tags',
-        component: () => import('@/views/admin/system/role/index'),
+        component: () => import('@/views/admin/problemset/tags/index'),
         meta: { title: '标签管理', icon: 'role' }
       }
     ]

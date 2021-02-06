@@ -2,101 +2,56 @@
   <div class="app-container">
     <!-- 工具栏 -->
     <div class="head-container">
-      <div v-if="searchToggle">
-        <!-- 搜索 -->
-        <el-input clearable size="small" placeholder="输入编号或题目搜索" style="width: 200px;" class="filter-item" />
-        <span>
-          <!-- 搜索 -->
-          <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="search">搜索</el-button>
-          <!-- 重置 -->
-          <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-left">重置</el-button>
-        </span>
-      </div>
-      <!-- 操作 -->
-      <div class="crud-opts">
-        <span class="crud-opts-left">
-          <el-button
-            class="filter-item"
-            size="mini"
-            type="primary"
-            icon="el-icon-plus"
-          >
-            新增
-          </el-button>
-          <el-button
-            class="filter-item"
-            size="mini"
-            type="success"
-            icon="el-icon-edit"
-          >
-            修改
-          </el-button>
-          <el-button
-            slot="reference"
-            class="filter-item"
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-          >
-            删除
-          </el-button>
-          <el-button
-            class="filter-item"
-            size="mini"
-            type="warning"
-            icon="el-icon-download"
-          >导出</el-button>
-        </span>
-        <el-button-group class="crud-opts-right">
-          <el-button
-            size="mini"
-            plain
-            type="info"
-            icon="el-icon-search"
-            @click="toggleSearch"
-          />
-          <el-button
-            size="mini"
-            icon="el-icon-refresh"
-          />
-        </el-button-group>
-      </div>
-      <!-- 状态 -->
-      <!-- <el-select clearable size="small" placeholder="状态" class="filter-item" style="width: 90px">
-        <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-      </el-select> -->
+      <header-tool v-model="queryParams.title" :name="searchTitle" :selections="selections" @insert="add" @update="edit(selections[0])" @delete="batchDelete" @search="search" />
     </div>
     <!-- 表格渲染 -->
-    <el-table :data="tableData" style="width: 100%">
+    <el-table ref="table" v-loading="loading" :data="tableData" style="width: 100%" @selection-change="selectionChangeHandler">
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="id" label="#" width="100" />
-      <el-table-column prop="source" label="OJ" show-overflow-tooltip />
+      <el-table-column prop="pid" label="#" width="100" />
+      <el-table-column prop="source.name" label="OJ" width="150" show-overflow-tooltip />
       <el-table-column prop="title" label="题目" show-overflow-tooltip />
-      <el-table-column prop="tag" label="标签" show-overflow-tooltip />
-      <el-table-column prop="level" label="难度" />
-      <el-table-column label="更新时间" width="180">
+      <el-table-column prop="level.name" label="难度" />
+      <el-table-column prop="updatetime" label="更新时间" width="180">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span style="margin-left: 10px">{{ scope.row.updateTime }}</span>
+          <span style="margin-left: 10px">{{ scope.row.modifyTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="120" align="center" fixed="right">
+      <el-table-column label="操作" width="180" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEdit(scope.$index, scope.row)" />
-          <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)" />
+          <el-button size="mini" icon="el-icon-view" type="info" @click="view(scope.row)" />
+          <el-button size="mini" icon="el-icon-edit" type="primary" @click="edit(scope.row)" />
+          <el-button size="mini" icon="el-icon-delete" type="danger" @click="singleDelete(scope.row)" />
         </template>
       </el-table-column>
     </el-table>
-    <pagination />
+    <pagination v-show="total>0" :total="total" :page.sync="pagination.current" :limit.sync="pagination.size" @pagination="search" />
+    <problem-view
+      ref="view"
+      :dialog-visible="userViewVisible"
+      @close="viewClose"
+    />
+    <problem-edit
+      ref="edit"
+      :dialog-visible="dialog.isVisible"
+      :dialog-title="dialog.title"
+      @success="editSuccess"
+      @close="editClose"
+    />
   </div>
 </template>
 
 <script>
-import { isvalidPhone } from '@/utils/validate'
 import Pagination from '@/components/Pagination'
+import HeaderTool from '@/components/HeaderTool'
+import ProblemView from './view'
+import ProblemEdit from './edit'
+import { isvalidPhone } from '@/utils/validate'
+import { getProblems, getProblem, del } from '@/api/problemset/problem'
+
 export default {
   name: 'Problems',
-  components: { Pagination },
+  components: { Pagination, HeaderTool, ProblemView, ProblemEdit },
   data() {
     // 自定义验证
     const validPhone = (rule, value, callback) => {
@@ -109,41 +64,22 @@ export default {
       }
     }
     return {
+      searchTitle: '输入编号或名称搜索',
+      queryParams: {},
+      loading: false,
+      total: 10,
+      selections: [],
+      pagination: {
+        size: 5,
+        current: 1
+      },
+      dialog: {
+        isVisible: false,
+        title: ''
+      },
+      userViewVisible: false,
       searchToggle: true,
-      tableData: [
-        {
-          id: '1',
-          source: 'leetcode',
-          title: '最长公共子序列',
-          tag: '动态规划',
-          level: '困难',
-          updateTime: '2016-05-02'
-        },
-        {
-          id: '2',
-          source: 'leetcode',
-          title: '最长公共子序列',
-          tag: '动态规划',
-          level: '困难',
-          updateTime: '2016-05-02'
-        },
-        {
-          id: '3',
-          source: 'leetcode',
-          title: '最长公共子序列',
-          tag: '动态规划',
-          level: '困难',
-          updateTime: '2016-05-02'
-        },
-        {
-          id: '4',
-          source: 'leetcode',
-          title: '最长公共子序列',
-          tag: '动态规划',
-          level: '困难',
-          updateTime: '2016-05-02'
-        }
-      ],
+      tableData: [],
       height: document.documentElement.clientHeight - 180 + 'px;',
       jobs: [],
       level: 3,
@@ -187,44 +123,98 @@ export default {
       }
     }
   },
+  created() {
+    this.search()
+  },
   methods: {
-    handleEdit(index, row) {
-      console.log(index, row)
-    },
-    handleDelete(index, row) {
-      console.log(index, row)
-    },
     toggleSearch() {
       this.searchToggle = !this.searchToggle
     },
     search() {
-      console.log('search')
-      this.$http.get('/test/1').then(
-        res => {
-          console.log(res.data.data)
-        }
-      ).catch(
-        error => {
-          console.log(error)
-        }
-      )
+      this.fetch({
+        ...this.queryParams
+      })
+    },
+    fetch(params = {}) {
+      params.size = this.pagination.size
+      params.current = this.pagination.current
+      this.loading = true
+      // 分页查询
+      getProblems(params).then(res => {
+        this.tableData = res.records
+        this.total = res.total
+        this.loading = false
+      })
+    },
+    add() {
+      this.dialog.title = '新增题目'
+      this.dialog.isVisible = true
+    },
+    edit(data) {
+      getProblem(data.pid).then(res => {
+        data.problem = res
+        this.$refs.edit.setProblem(data)
+        this.dialog.title = '修改题目'
+        this.dialog.isVisible = true
+      })
+    },
+    batchDelete() {
+      if (!this.selections.length) {
+        this.$message({
+          message: '请先选择需要操作的数据',
+          type: 'warning'
+        })
+        return
+      }
+      this.$confirm('选中数据将被永久删除, 是否继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log('del')
+        const tagIds = this.selections.map(item => {
+          return item.id
+        })
+        this.delete(tagIds)
+      }).catch(() => {
+        this.clearSelections()
+      })
+    },
+    singleDelete(data) {
+      this.$refs.table.toggleRowSelection(data, true)
+      this.batchDelete()
+    },
+    delete(ids) {
+      this.loading = true
+      del(ids).then(() => {
+        this.loading = false
+        this.$message({
+          message: '删除题目成功',
+          type: 'success'
+        })
+        this.search()
+      })
+    },
+    viewClose() {
+      this.userViewVisible = false
+    },
+    view(row) {
+      this.$refs.view.initData(row)
+      this.userViewVisible = true
+    },
+    editClose() {
+      this.dialog.isVisible = false
+    },
+    editSuccess() {
+      this.search()
+    },
+    // 选择数据改变
+    selectionChangeHandler(val) {
+      this.selections = val
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .crud-opts {
-    padding: 4px 0;
-    display: -webkit-flex;
-    display: flex;
-    align-items: center;
-  }
-  .crud-opts .crud-opts-right {
-    margin-left: auto;
-  }
-  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
-    height: 30px;
-    line-height: 30px;
-  }
 </style>
