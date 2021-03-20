@@ -40,11 +40,9 @@
 <script>
 import Pagination from '@/components/Pagination'
 import HeaderTool from '@/components/HeaderTool'
-import { getTags } from '@/api/problemset/tag'
-import crudTags from '@/api/problemset/tag'
-
+import curdSource from '@/api/problemset/source'
 export default {
-  name: 'Tags',
+  name: 'Sources',
   components: { Pagination, HeaderTool },
   data() {
     return {
@@ -52,34 +50,29 @@ export default {
       tableKey: 0,
       queryParams: {},
       loading: false,
-      total: 10,
+      total: 0,
       selections: [],
       tableData: [],
       pagination: {
-        size: 5,
+        size: 10,
         current: 1
       },
       dialog: {
-        title: '编辑标签',
+        title: '',
         isVisible: false,
         status: false
       },
-      userViewVisible: false,
-      searchToggle: true,
       form: {
-        id: '',
+        id: null,
         name: '',
-        createTime: ''
+        description: ''
       },
       rules: {
         name: [
-          { required: true, message: '名称不能为空' }
+          { required: true, message: '名称不能为空', trigger: 'blur' }
         ]
       }
     }
-  },
-  created() {
-    this.search()
   },
   mounted() {
     this.fetch()
@@ -97,26 +90,39 @@ export default {
       params.current = this.pagination.current
       this.loading = true
       // 分页查询
-      getTags(params).then(res => {
+      curdSource.getSources(params).then(res => {
         this.tableData = res.records
         this.total = res.total
+        this.loading = false
+      }).catch(() => {
         this.loading = false
       })
     },
     addBtn() {
-      this.dialog.title = '新增标签'
+      this.dialog.title = '新增题目来源'
       this.dialog.isVisible = true
     },
     editBtn(data) {
-      this.form.id = data.id
-      this.form.name = data.name
-      this.form.createTime = data.createTime
+      // 表单数据初始化
+      this.form = Object.assign({}, data) // 深克隆
       console.log(this.form)
-      this.dialog.title = '修改标签'
+      this.dialog.title = '编辑题目来源'
       this.dialog.isVisible = true
     },
+    editClose() {
+      this.dialog.isVisible = false
+      this.$refs.form.resetFields()
+      this.form = {
+        id: null,
+        name: '',
+        description: ''
+      }
+    },
+    editSuccess() {
+      this.search()
+    },
     // 顶部批量删除按钮
-    batchDelete() {
+    batchDeleteBtn() {
       if (!this.selections.length) {
         this.$message({
           message: '请先选择需要操作的数据',
@@ -129,73 +135,61 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log('del')
-        const tagIds = this.selections.map(item => {
+        const ids = this.selections.map(item => {
           return item.id
         })
-        console.log(tagIds)
-        this.delete(tagIds)
+        console.log('del')
+        console.log(ids)
+        this.delete(ids)
       }).catch(() => {
         this.clearSelections()
       })
     },
     // 表格的删除按钮
-    singleDelete(data) {
+    singleDeleteBtn(data) {
       this.$refs.table.toggleRowSelection(data, true)
-      this.batchDelete()
+      this.batchDeleteBtn()
     },
-    // 删除标签
+    // 删除题目来源
     delete(ids) {
       this.loading = true
-      crudTags.del(ids).then(() => {
+      curdSource.del(ids).then(() => {
         this.loading = false
         this.$message({
-          message: '删除标签成功',
+          message: '删除题目来源成功',
           type: 'success'
         })
         this.search()
       })
     },
+    // 清除选中
     clearSelections() {
       this.$refs.table.clearSelection()
-    },
-    editClose() {
-      this.dialog.isVisible = false
-      this.$refs.form.resetFields()
-      this.form = {
-        id: '',
-        name: '',
-        createTime: ''
-      }
-    },
-    editSuccess() {
-      this.search()
     },
     // 选择数据改变
     selectionChangeHandler(val) {
       this.selections = val
     },
     // 提交表单
-    submit() {
+    submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.buttonLoading = true
           if (!this.form.id) { // 新增
-            crudTags.add(this.form).then(res => {
+            curdSource.add(this.form).then(res => {
               this.buttonLoading = false
               this.editClose()
-              this.$message({
-                message: '新增标签成功',
-                type: 'success'
-              })
               this.editSuccess()
+              this.$message.success({
+                message: '新增题目来源成功'
+              })
             })
           } else { // 更新
-            crudTags.edit(this.form).then(res => {
+            curdSource.edit(this.form).then(res => {
               this.buttonLoading = false
               this.editClose()
               this.$message({
-                message: '修改标签成功',
+                message: '修改题目来源成功',
                 type: 'success'
               })
               this.editSuccess()

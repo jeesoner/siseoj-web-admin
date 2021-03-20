@@ -1,24 +1,22 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, setUser, getUser, clear } from '@/utils/auth'
 
-const getDefaultState = () => {
-  return {
-    token: getToken(),
-    user: {},
-    avatar: '',
-    roles: [],
-    // 第一次加载菜单的时候用到
-    loadMenus: false
-  }
+const state = {
+  token: getToken(),
+  user: getUser(),
+  roles: [],
+  // 第一次加载菜单的时候用到
+  loadMenus: false
 }
 
-const state = getDefaultState()
+const getters = {
+  token: state => state.token || '',
+  avatar: state => state.user.avatar || '',
+  name: state => state.user.nickname || '',
+  user: state => state.user || {}
+}
 
 const mutations = {
-  // 重置state
-  RESET_STATE: (state) => {
-    Object.assign(state, getDefaultState())
-  },
   // 设置token
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -26,10 +24,6 @@ const mutations = {
   // 设置用户信息
   SET_USER: (state, user) => {
     state.user = user
-  },
-  // 设置头像
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
   },
   // 设置角色
   SET_ROLES: (state, roles) => {
@@ -47,9 +41,10 @@ const actions = {
     const rememberMe = userInfo.rememberMe
     return new Promise((resolve, reject) => {
       login(userInfo.username, userInfo.password, userInfo.code, userInfo.uuid).then(res => {
-        // 根据rememberMe判断是否设置token到cookie中
+        // 根据rememberMe判断是否设置token和user到cookie中
         setToken(res.token, rememberMe)
-        // 将token设置到store中
+        setUser(res.user.user, rememberMe)
+        // 将token和user设置到store中
         commit('SET_TOKEN', res.token)
         setUserInfo(res.user, commit)
         // 第一次加载菜单时用到， 具体见 src 目录下的 permission.js
@@ -95,8 +90,9 @@ const actions = {
 
 export const logOut = (commit) => {
   commit('SET_TOKEN', '')
+  commit('SET_USER', {})
   commit('SET_ROLES', [])
-  removeToken()
+  clear()
 }
 
 export const setUserInfo = (res, commit) => {
@@ -111,6 +107,7 @@ export const setUserInfo = (res, commit) => {
 
 export default {
   state,
+  getters,
   mutations,
   actions
 }

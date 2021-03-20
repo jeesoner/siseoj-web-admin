@@ -131,7 +131,7 @@
   </el-dialog>
 </template>
 <script>
-import { getProblem } from '@/api/problemset/problem'
+import { getProblemInfo } from '@/api/problemset/problem'
 
 export default {
   name: 'UserView',
@@ -195,7 +195,7 @@ export default {
     },
     // 初始化数据
     initData(val) {
-      getProblem(val.pid).then(res => {
+      getProblemInfo(val.pid).then(res => {
         this.problem = res
         this.problemInfo = res.problemInfo
       })

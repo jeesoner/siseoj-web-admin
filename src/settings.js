@@ -1,16 +1,37 @@
 module.exports = {
 
-  title: 'SISE OJ',
+  /**
+   * 网站标题
+   */
+  title: 'niu code',
 
   /**
-   * @type {boolean} true | false
-   * @description Whether fix the header
+   * 固定头部
    */
   fixedHeader: false,
 
   /**
-   * @type {boolean} true | false
-   * @description Whether show the logo in sidebar
+   * 侧边栏 Logo
    */
-  sidebarLogo: false
+  sidebarLogo: false,
+
+  /**
+   * 服务器地址
+   */
+  serverUrl: 'http://localhost:8080',
+
+  /**
+   * token
+   */
+  tokenKey: 'admin-token',
+
+  /**
+   * token过期时间：7天
+   */
+  tokenCookieExpires: 7,
+
+  /**
+   * 管理员信息
+   */
+  userKey: 'adminInfo'
 }

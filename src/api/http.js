@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { Message, Notification } from 'element-ui'
+import { Notification } from 'element-ui'
 import Cookies from 'js-cookie'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import router from '@/router/routers'
 
 // 创建axios实例
 const service = axios.create({
   baseURL: 'http://localhost:8080',
-  timeout: 6000 // 请求超过时间
+  timeout: 5000 // 请求超过时间
 })
 
 // request 拦截器
@@ -25,7 +26,11 @@ service.interceptors.request.use(
   },
   error => {
     console.log(error)
-    Message.error('服务器繁忙，请稍后重试！')
+    Notification.error({
+      title: '错误',
+      message: '服务器繁忙，请稍后重试',
+      duration: 3000
+    })
     return Promise.reject(error)
   }
 )
@@ -33,45 +38,73 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   response => {
-    const res = response.data
-    /**
-     * @success 为 ture 表示请求成功；为 false 表示业务异常
-     */
-    if (res.success) {
-      return res.data
+    if (response.data.success) {
+      return response.data.data
     } else {
-      if (res.code === 70001) { // 凭据失效，请重新登录
-        store.dispatch('logout').then(() => {
-          // 用户登录界面提示
-          Cookies.set('point', 70001)
-          location.reload()
-        })
-      } else if (res.code === 70002) { // 无权限访问
-        Notification.error({
-          title: response.data.message,
-          duration: 5000
-        })
-      } else {
-        Notification.error({
-          title: response.data.message,
-          duration: 5000
-        })
-      }
-      console.log(res.message)
-      return Promise.reject(res.message)
+      Notification.error({
+        title: '错误',
+        message: response.data.message,
+        duration: 3000
+      })
+      return Promise.reject(response)
     }
   },
   error => {
-    if (String(error).toLowerCase().indexOf('timeout') !== -1) {
-      Message.error('服务器繁忙，请稍后重试！')
-    } else if (error.response.status === 404) {
-      Message.error('服务器好像挂了，要不等等试试')
-    } else if (error.response.status === 500) {
-      Message.error('服务器内部错误！错误原因：' + error.response.data.message)
+    if (error.response) {
+      // 处理超时
+      if (error.toString().indexOf('Error: timeout') !== -1) {
+        Notification.error({
+          title: '错误',
+          message: '网络请求超时',
+          duration: 3000
+        })
+        return Promise.reject(error)
+      }
+      switch (error.response.status) {
+        // 401 未登录 token过期
+        case 401:
+          store.dispatch('logout').then(() => { // 凭据失效，请重新登录
+            // 用户登录界面提示
+            Cookies.set('point', 401)
+            router.push('/login')
+          })
+          break
+        // 403 无权限访问或操作的请求
+        case 403:
+          Notification.error({
+            title: '错误',
+            message: error.response.data.message,
+            duration: 3000
+          })
+          break
+        case 404:
+          Notification.error({
+            title: '错误',
+            message: '查询错误，找不到要请求的资源！',
+            duration: 3000
+          })
+          break
+        // 其他错误，直接抛出错误提示
+        default:
+          if (error.response.data) {
+            Notification.error({
+              title: '错误',
+              message: error.response.data.message,
+              duration: 3000
+            })
+          }
+          break
+      }
+      return Promise.reject(error)
     } else {
-      Message.error(error.response.data.message)
+      // 处理断网
+      Notification.error({
+        title: '错误',
+        message: '与服务器链接出现异常，请稍后再尝试！',
+        duration: 3000
+      })
+      return Promise.reject(error)
     }
-    return Promise.reject(error)
   }
 )
 

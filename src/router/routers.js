@@ -18,9 +18,8 @@ Vue.use(Router)
     noCache: true                默认false，如果设置为true，则不会被 <keep-alive> 缓存
     affix: true                  if set true, the tag will affix in the tags-view
     breadcrumb: false            如果设置为false，则不会在breadcrumb面包屑中显示
-}
     activeMenu: '/example/list'  如果设置了路径，在侧边栏会高亮你设置的路径
-  }
+}
  */
 
 /**
@@ -50,7 +49,7 @@ export const constantRoutes = [
       {
         path: 'dashboard',
         name: 'Dashboard',
-        component: () => import('@/views/admin/dashboard/index'),
+        component: () => import('@/views/admin/home'),
         meta: { title: '主页', icon: 'dashboard' }
       }
     ]
@@ -92,10 +91,23 @@ export const constantRoutes = [
         meta: { title: '题目管理', icon: 'education' }
       },
       {
+        path: 'problems/edit/:pid?',
+        name: 'ProblemEdit',
+        component: () => import('@/views/admin/problemset/problems/edit'),
+        meta: { title: '创建题目', icon: 'el-icon-document', activeMenu: '/problemset/problems' },
+        hidden: true
+      },
+      {
         path: 'tags',
         name: 'Tags',
         component: () => import('@/views/admin/problemset/tags/index'),
         meta: { title: '标签管理', icon: 'role' }
+      },
+      {
+        path: 'sources',
+        name: 'Sources',
+        component: () => import('@/views/admin/problemset/sources/index'),
+        meta: { title: '来源管理', icon: 'source' }
       }
     ]
   },
@@ -103,36 +115,62 @@ export const constantRoutes = [
   {
     path: '/contest',
     component: Layout,
-    name: 'Problem',
-    redirect: '/problem/user',
-    meta: { title: '比赛管理', icon: 'source' },
+    name: 'Contest',
+    redirect: '/contest/list',
+    meta: { title: '比赛管理', icon: 'el-icon-star-off' },
     children: [
       {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/admin/system/user/index'),
-        meta: { title: '普通模式', icon: 'peoples' }
+        path: 'list',
+        name: 'ContestList',
+        component: () => import('@/views/admin/contest/contest'),
+        meta: { title: '比赛列表', icon: 'peoples' }
       },
       {
-        path: 'role',
-        name: 'Role',
-        component: () => import('@/views/admin/system/role/index'),
-        meta: { title: '挑战模式', icon: 'role' }
+        path: 'create',
+        name: 'ContestCreate',
+        component: () => import('@/views/admin/contest/contestEdit'),
+        meta: { title: '创建比赛', icon: 'role' }
+      },
+      {
+        path: ':contestId/edit',
+        name: 'ContestEdit',
+        component: () => import('@/views/admin/contest/contestEdit'),
+        meta: { title: '编辑比赛', activeMenu: '/contest/create' },
+        hidden: true
+      },
+      {
+        path: ':contestId/problems',
+        name: 'ContestProblems',
+        component: () => import('@/views/admin/contest/contestProblems'),
+        meta: { title: '比赛题目', activeMenu: '/contest/create' },
+        hidden: true
+      },
+      {
+        path: ':contestId/problems/create',
+        name: 'ContestProblemCreate',
+        component: () => import('@/views/admin/contest/problem'),
+        meta: { title: '创建比赛题目', icon: 'el-icon-document', activeMenu: '/contest/create' },
+        hidden: true
+      },
+      {
+        path: ':contestId/problems/:pid/edit',
+        name: 'ContestProblemEdit',
+        component: () => import('@/views/admin/contest/problem'),
+        meta: { title: '编辑比赛题目', icon: 'el-icon-document', activeMenu: '/contest/create' },
+        hidden: true
       }
     ]
   },
-
   {
     path: 'external-link',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'https://github.com/cijee',
+        meta: { title: '我的Github', icon: 'link' }
       }
     ]
   },
-
   // 404 页面 必须在最后 !!!
   // 路由是有优先级的，谁在前面就谁优先匹配，所以越精确的路由，越要放在前面
   { path: '*', redirect: '/404', hidden: true }

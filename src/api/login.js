@@ -9,7 +9,7 @@ export function getCodeImg() {
 
 export function login(username, password, code, uuid) {
   return request({
-    url: 'auth/login',
+    url: 'auth/admin-login',
     method: 'post',
     data: {
       username,

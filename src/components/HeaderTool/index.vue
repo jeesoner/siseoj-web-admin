@@ -3,7 +3,9 @@
     <div v-if="searchToggle">
       <!-- 搜索 -->
       <el-input v-model="searchValue" clearable size="small" :placeholder="name" style="width: 200px;" class="filter-item" @keyup.enter.native="keydownHandler" />
-      <span>
+      <!-- 插槽内容 -->
+      <slot />
+      <span class="search-btn">
         <!-- 搜索 -->
         <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="search">搜索</el-button>
         <!-- 重置 -->
@@ -12,7 +14,7 @@
     </div>
     <!-- 操作 -->
     <div class="crud-opts">
-      <span class="crud-opts-left">
+      <span v-if="crudButton" class="crud-opts-left">
         <el-button
           class="filter-item"
           size="mini"
@@ -83,6 +85,10 @@ export default {
     selections: {
       required: true,
       type: Array
+    },
+    crudButton: {
+      default: true,
+      type: Boolean
     }
   },
   data() {
@@ -141,5 +147,8 @@ export default {
   }
   .crud-opts .crud-opts-right {
     margin-left: auto;
+  }
+  .search-btn {
+    margin-left: 10px;
   }
 </style>

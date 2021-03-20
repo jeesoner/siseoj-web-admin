@@ -238,7 +238,7 @@ import { add, update, getProblemCase } from '@/api/problemset/problem'
 import { stringToExamples, examplesToString } from '@/utils/string'
 
 export default {
-  name: 'ProblemEdit',
+  name: 'ContestProblemEdit',
   components: { MdEditor, AceEditor },
   props: {
     dialogVisible: {
@@ -457,24 +457,24 @@ export default {
 }
 </script>
 <style scoped>
-  .problem-content {
-    margin:0 auto;
-    width: 100%;
-  }
-  .box-card {
-    margin:10px;
-  }
-  .form-button {
-    float: right;
-    margin-top: 10px;
-  }
-  .form-item-title {
-    font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    color: #409eff;
-  }
-  .add-examples {
+.problem-content {
+  margin:0 auto;
+  width: 100%;
+}
+.box-card {
+  margin:10px;
+}
+.form-button {
+  float: right;
+  margin-top: 10px;
+}
+.form-item-title {
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  color: #409eff;
+}
+.add-examples {
   width: 100%;
   background-color: #fff;
   border: 1px dashed #2d8cf0;
