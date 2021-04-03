@@ -58,4 +58,4 @@ export function del(ids) {
   })
 }
 
-export default { getRoles, getByUseId, get, add, edit, del }
+export default { getRoles, getByUseId, getAllRole, get, add, edit, del }

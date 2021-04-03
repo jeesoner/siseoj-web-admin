@@ -13,6 +13,7 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@riophae/vue-treeselect": "^0.4.0",
     "@tinymce/tinymce-vue": "^1.1.0",
     "ace-builds": "^1.4.8",
     "axios": "^0.18.1",

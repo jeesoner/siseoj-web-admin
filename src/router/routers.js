@@ -66,13 +66,25 @@ export const constantRoutes = [
         path: 'user',
         name: 'User',
         component: () => import('@/views/admin/system/user/index'),
-        meta: { title: '用户管理', icon: 'peoples' }
+        meta: { title: '用户管理', icon: 'el-icon-user-solid' }
       },
       {
         path: 'role',
         name: 'Role',
         component: () => import('@/views/admin/system/role/index'),
         meta: { title: '角色管理', icon: 'role' }
+      },
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/admin/system/menu/index'),
+        meta: { title: '菜单管理', icon: 'el-icon-menu' }
+      },
+      {
+        path: 'discuss',
+        name: 'Discuss',
+        component: () => import('@/views/admin/system/role/index'),
+        meta: { title: '讨论区管理', icon: 'el-icon-chat-dot-round' }
       }
     ]
   },
@@ -82,7 +94,7 @@ export const constantRoutes = [
     component: Layout,
     name: 'Problemset',
     redirect: '/problemset/problems',
-    meta: { title: '题库管理', icon: 'list' },
+    meta: { title: '题库管理', icon: 'el-icon-s-grid' },
     children: [
       {
         path: 'problems',
@@ -101,7 +113,7 @@ export const constantRoutes = [
         path: 'tags',
         name: 'Tags',
         component: () => import('@/views/admin/problemset/tags/index'),
-        meta: { title: '标签管理', icon: 'role' }
+        meta: { title: '标签管理', icon: 'el-icon-collection-tag' }
       },
       {
         path: 'sources',
@@ -123,13 +135,13 @@ export const constantRoutes = [
         path: 'list',
         name: 'ContestList',
         component: () => import('@/views/admin/contest/contest'),
-        meta: { title: '比赛列表', icon: 'peoples' }
+        meta: { title: '比赛列表', icon: 'el-icon-trophy' }
       },
       {
         path: 'create',
         name: 'ContestCreate',
         component: () => import('@/views/admin/contest/contestEdit'),
-        meta: { title: '创建比赛', icon: 'role' }
+        meta: { title: '创建比赛', icon: 'el-icon-medal' }
       },
       {
         path: ':contestId/edit',

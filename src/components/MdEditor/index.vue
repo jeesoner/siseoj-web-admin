@@ -1,5 +1,5 @@
 <template>
-  <div class="markdown-body" :style="{height: contentHeight}">
+  <div class="markdown-body" :style="handleHeight">
     <mavon-editor ref="md" v-model="currentValue" code-style="dracula" :ishljs="true" @imgAdd="$imgAdd" @change="handleChange" />
   </div>
 </template>
@@ -18,10 +18,7 @@ export default {
       type: String,
       default: ''
     },
-    height: {
-      type: Number,
-      default: 300
-    }
+    height: [Number]
   },
   data() {
     return {
@@ -41,6 +38,13 @@ export default {
     handleChange(value, render) {
       this.$emit('inputValue', value)
       this.$emit('inputRender', render)
+    },
+    handleHeight() {
+      if (this.height) {
+        return this.height
+      } else {
+        return ''
+      }
     },
     // 绑定@imgAdd event
     async $imgAdd(pos, $file) {

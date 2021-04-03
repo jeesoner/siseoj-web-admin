@@ -7,7 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+          <img :src="avatar ? baseApi + '/avatar/' + avatar : Avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -16,7 +16,7 @@
               主页
             </el-dropdown-item>
           </router-link>
-          <span style="display:block;" @click="show = true">
+          <!-- <span style="display:block;" @click="show = true">
             <el-dropdown-item>
               布局设置
             </el-dropdown-item>
@@ -25,7 +25,7 @@
             <el-dropdown-item>
               个人中心
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <span style="display:block;" @click="open">
             <el-dropdown-item divided>
               退出登录
@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sidebar', 'avatar'
+      'sidebar', 'avatar', 'baseApi'
     ]),
     show: {
       get() {

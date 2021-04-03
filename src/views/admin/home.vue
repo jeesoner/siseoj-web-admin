@@ -1,13 +1,14 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-editor-container">
-      <github-corner class="github-corner" />
 
       <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
+      <!-- 数据统计列 -->
       <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
         <line-chart :chart-data="lineChartData" />
       </el-row>
+      <!-- 图表展示列 -->
       <el-row :gutter="32">
         <el-col :xs="24" :sm="24" :lg="8">
           <div class="chart-wrapper">

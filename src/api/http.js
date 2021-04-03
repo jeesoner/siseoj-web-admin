@@ -7,7 +7,7 @@ import router from '@/router/routers'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_API : process.env.VUE_APP_BASE_API, // api 的 base_url
   timeout: 5000 // 请求超过时间
 })
 

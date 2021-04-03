@@ -23,6 +23,12 @@
   </a>
 </template>
 
+<script>
+export default {
+  name: 'GithubCorner'
+}
+</script>
+
 <style scoped>
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out

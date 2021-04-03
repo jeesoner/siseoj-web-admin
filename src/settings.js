@@ -3,7 +3,7 @@ module.exports = {
   /**
    * 网站标题
    */
-  title: 'niu code',
+  title: 'Niu Code',
 
   /**
    * 固定头部
@@ -23,7 +23,7 @@ module.exports = {
   /**
    * token
    */
-  tokenKey: 'admin-token',
+  tokenKey: 'NIUCODE-ADMIN-TOKEN',
 
   /**
    * token过期时间：7天

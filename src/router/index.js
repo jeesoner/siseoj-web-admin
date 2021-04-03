@@ -3,7 +3,7 @@ import store from '@/store'
 import NProgress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css' // 进度条样式
 import { getToken } from '@/utils/auth' // 从cookie中拿到token
-import getPageTitle from '@/utils/get-page-title'
+import Config from '@/settings'
 
 NProgress.configure({ showSpinner: false }) // 进度条配置
 
@@ -11,11 +11,12 @@ const whiteList = ['/login'] // 重定向路由白名单
 
 router.beforeEach((to, from, next) => {
   // 进度条开始
-  NProgress.start()
+  NProgress.start({ showSpinner: false })
 
   // 设置页面标题
-  document.title = getPageTitle(to.meta.title)
-  // next()
+  if (to.meta.title) {
+    document.title = to.meta.title + ' - ' + Config.title
+  }
 
   // 拿到token
   const hasToken = getToken()

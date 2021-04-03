@@ -143,7 +143,7 @@ export default {
     }
   },
   mounted() {
-    this.fetch()
+    this.search()
   },
   methods: {
     transSex(sex) {
