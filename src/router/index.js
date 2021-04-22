@@ -3,6 +3,7 @@ import store from '@/store'
 import NProgress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css' // 进度条样式
 import { getToken } from '@/utils/auth' // 从cookie中拿到token
+import { buildMenus } from '@/api/system/menu'
 import Config from '@/settings'
 
 NProgress.configure({ showSpinner: false }) // 进度条配置
@@ -22,6 +23,7 @@ router.beforeEach((to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
+    loadMenus(next, to)
     if (to.path === '/login') {
       // 如果已经登录，直接跳转到主页
       next({ path: '/' })
@@ -68,13 +70,14 @@ router.afterEach(() => {
   NProgress.done()
 })
 
-// export const loadMenus = (next, to) => {
-//   buildMenus().then(res => {
-//     const asyncRouter = filterAsyncRouter(res)
-//     asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
-//     store.dispatch('GenerateRoutes', asyncRouter).then(() => { // 存储路由
-//       router.addRoutes(asyncRouter) // 动态添加可访问路由表
-//       next({ ...to, replace: true })
-//     })
-//   })
-// }
+export const loadMenus = (next, to) => {
+  buildMenus().then(res => {
+    console.log(res)
+  //   const asyncRouter = filterAsyncRouter(res)
+  //   asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
+  //   store.dispatch('GenerateRoutes', asyncRouter).then(() => { // 存储路由
+  //     router.addRoutes(asyncRouter) // 动态添加可访问路由表
+  //     next({ ...to, replace: true })
+  //   })
+  })
+}

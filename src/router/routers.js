@@ -79,12 +79,6 @@ export const constantRoutes = [
         name: 'Menu',
         component: () => import('@/views/admin/system/menu/index'),
         meta: { title: '菜单管理', icon: 'el-icon-menu' }
-      },
-      {
-        path: 'discuss',
-        name: 'Discuss',
-        component: () => import('@/views/admin/system/role/index'),
-        meta: { title: '讨论区管理', icon: 'el-icon-chat-dot-round' }
       }
     ]
   },
@@ -176,10 +170,17 @@ export const constantRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    meta: { title: '外部链接', icon: 'link' },
     children: [
       {
+        name: 'github',
         path: 'https://github.com/cijee',
         meta: { title: '我的Github', icon: 'link' }
+      },
+      {
+        name: 'interfaceDoc',
+        path: 'http://localhost:8080/swagger-ui.html',
+        meta: { title: '接口文档', icon: 'link' }
       }
     ]
   },

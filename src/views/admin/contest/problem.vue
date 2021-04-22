@@ -204,7 +204,7 @@
         >新增评测样例
         </el-button>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-row>
           <el-col :span="24">
             <el-checkbox
@@ -212,7 +212,7 @@
             >使用特判代码</el-checkbox>
           </el-col>
         </el-row>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item v-if="spj">
         <aceEditor
           id="ace-editor"

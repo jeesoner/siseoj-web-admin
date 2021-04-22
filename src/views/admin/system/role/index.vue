@@ -12,7 +12,16 @@
             <span class="role-span">角色列表</span>
           </div>
           <!-- 表格渲染 -->
-          <el-table :key="tableKey" ref="table" v-loading="loading" :data="tableData" style="width: 100%" @selection-change="selectionChangeHandler">
+          <el-table
+            :key="tableKey"
+            ref="table"
+            v-loading="loading"
+            highlight-current-row
+            :data="tableData"
+            style="width: 100%"
+            @selection-change="selectionChangeHandler"
+            @current-change="handleCurrentChange"
+          >
             <el-table-column type="selection" width="55" />
             <el-table-column :show-overflow-tooltip="true" prop="name" label="名称" />
             <el-table-column :show-overflow-tooltip="true" prop="description" label="描述" />
@@ -55,7 +64,6 @@
               <span class="role-span">菜单分配</span>
             </el-tooltip>
             <el-button
-              v-permission="['admin','roles:edit']"
               :disabled="!showButton"
               :loading="menuLoading"
               icon="el-icon-check"
@@ -102,6 +110,9 @@ export default {
       total: 0,
       selections: [],
       tableData: [],
+      menuIds: [],
+      showButton: false,
+      menuLoading: false,
       menus: [],
       menusId: [],
       pagination: {
@@ -156,7 +167,6 @@ export default {
     editBtn(data) {
       // 表单数据初始化
       this.form = Object.assign({}, data) // 深克隆
-      console.log(this.form)
       this.dialog.title = '编辑角色'
       this.dialog.isVisible = true
     },
@@ -195,6 +205,22 @@ export default {
       }).catch(() => {
         this.clearSelections()
       })
+    },
+    // 触发单选
+    handleCurrentChange(val) {
+      if (val) {
+        const _this = this
+        // 清空菜单的选中
+        this.$refs.menu.setCheckedKeys([])
+        // 保存当前的角色id
+        this.currentId = val.id
+        // 初始化默认选中的key
+        this.menuIds = []
+        val.menus.forEach(function(data) {
+          _this.menuIds.push(data.id)
+        })
+        this.showButton = true
+      }
     },
     // 表格的删除按钮
     singleDeleteBtn(data) {
@@ -248,6 +274,36 @@ export default {
           }
         }
         this.$refs.menu.setCheckedKeys(this.menuIds)
+      })
+    },
+    // 保存分配后的用户菜单
+    saveMenu() {
+      this.menuLoading = true
+      const role = { id: this.currentId, menus: [] }
+      // 得到已选中的 key 值
+      this.menuIds.forEach(function(id) {
+        const menu = { id: id }
+        role.menus.push(menu)
+      })
+      crudRole.editMenu(role).then(() => {
+        this.$message.success('保存成功')
+        this.menuLoading = false
+        this.update()
+      }).catch(err => {
+        this.menuLoading = false
+        console.log(err)
+      })
+    },
+    // 改变数据
+    update() {
+      // 无刷新更新 表格数据
+      crudRole.get(this.currentId).then(res => {
+        for (let i = 0; i < this.tableData.length; i++) {
+          if (res.id === this.tableData[i].id) {
+            this.tableData[i] = res
+            break
+          }
+        }
       })
     },
     // 提交表单

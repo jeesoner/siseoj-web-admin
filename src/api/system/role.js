@@ -58,4 +58,12 @@ export function del(ids) {
   })
 }
 
-export default { getRoles, getByUseId, getAllRole, get, add, edit, del }
+export function editMenu(data) {
+  return request({
+    url: 'admin/roles/menu',
+    method: 'put',
+    data
+  })
+}
+
+export default { getRoles, getByUseId, getAllRole, get, add, edit, del, editMenu }

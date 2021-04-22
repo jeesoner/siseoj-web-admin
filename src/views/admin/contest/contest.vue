@@ -154,15 +154,7 @@ export default {
         current: 1
       },
       searchToggle: true,
-      tableData: [
-        {
-          id: 1,
-          title: '测试1',
-          type: 1,
-          auth: 1,
-          status: -1
-        }
-      ],
+      tableData: [],
       CONTEST_AUTH_REVERSE: {},
       CONTEST_STATUS_REVERSE: {},
       CONTEST_TYPE_REVERSE: {},

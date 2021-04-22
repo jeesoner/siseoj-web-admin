@@ -68,8 +68,8 @@ export default {
       Background: Background,
       codeUrl: '',
       loginForm: {
-        username: 'root',
-        password: '123abc',
+        username: '',
+        password: '',
         rememberMe: false,
         uuid: '',
         code: ''
