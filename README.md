@@ -1,46 +1,28 @@
-# siseoj-web
+# siseoj-web-admin
 
-## Build Setup
+## 构建设置
 
 
 ```bash
-# clone the project
-git clone https://github.com/cijee/siseoj-web.git
+# 克隆项目
+git clone https://github.com/cijee/siseoj-web-admin.git
 
-# enter the project directory
-cd siseoj-web
+# 进入到项目目录
+cd siseoj-web-admin
 
-# install dependency
+# 安装依赖
 npm install
 
-# develop
+# 运行dev环境
 npm run dev
 ```
 
-This will automatically open http://localhost:9528
+项目运行地址 http://localhost:9528
 
-## Build
+## 打包
 
 ```bash
-# build for test environment
-npm run build:stage
 
-# build for production environment
+# 打包到生产环境
 npm run build:prod
-```
-
-## Advanced
-
-```bash
-# preview the release environment effect
-npm run preview
-
-# preview the release environment effect + static resource analysis
-npm run preview -- --report
-
-# code format check
-npm run lint
-
-# code format check and auto fix
-npm run lint -- --fix
 ```
