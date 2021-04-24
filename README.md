@@ -1,4 +1,4 @@
-# siseoj-web-admin
+# siseoj-web-admin OJ后台管理系统
 
 ## 构建设置
 
@@ -17,7 +17,9 @@ npm install
 npm run dev
 ```
 
-项目运行地址 http://localhost:9528
+**运行地址：** http://localhost:9528
+
+**账号密码：** root / 123abc
 
 ## 打包
 
